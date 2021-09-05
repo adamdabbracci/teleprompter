@@ -22,4 +22,3 @@ conditions:
     url: https://chaoscollector.ngrok.io/ping
     vus: 100,
     duration: 5
----
