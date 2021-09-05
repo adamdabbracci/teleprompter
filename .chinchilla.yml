@@ -1,0 +1,25 @@
+---
+version: 1.0
+name: 'Load test - Prod'
+description: 'Hit production with high tide load'
+tags:
+  - prod
+  - load
+region: us-east-1
+steady_states:
+  - name: 'Check main site'
+    type: 'http'
+    endpoint: 'https://chaoscollector.ngrok.io/health'
+    status: 200
+conditions:
+  - name: 'Send 10 vus for 5s'
+    method: 'stress_endpoint'
+    url: https://chaoscollector.ngrok.io/ping
+    vus: 10,
+    duration: 5
+  - name: 'Send 100 vus for 5s'
+    method: 'stress_endpoint'
+    url: https://chaoscollector.ngrok.io/ping
+    vus: 100,
+    duration: 5
+---
