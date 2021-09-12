@@ -16,11 +16,11 @@ steps:
   - name: 'Stop the server'
     action: 'stop_instances'
     parameters:
-      - instance_ids:
+      instance_ids:
         -  "i-0eb96356f41ef95c1"
 rollbacks:
   - name: 'Start the server'
     action: 'start_instances'
     parameters:
-      - instance_ids:
+      instance_ids:
         -  "i-0eb96356f41ef95c1"
