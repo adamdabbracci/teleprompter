@@ -11,14 +11,16 @@ steady_states:
     type: 'http'
     endpoint: 'https://chaoscollector.ngrok.io/health'
     status: 200
-conditions:
+steps:
   - name: 'Send 10 vus for 5s'
     method: 'stress_endpoint'
-    url: https://chaoscollector.ngrok.io/ping
-    vus: 10,
-    duration: 5
+    parameters:
+      url: https://chaoscollector.ngrok.io/ping
+      vus: 10,
+      duration: 5
   - name: 'Send 100 vus for 5s'
     method: 'stress_endpoint'
-    url: https://chaoscollector.ngrok.io/ping
-    vus: 100,
-    duration: 5
+    parameters:
+      url: https://chaoscollector.ngrok.io/ping
+      vus: 100,
+      duration: 5
