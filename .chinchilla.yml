@@ -1,5 +1,30 @@
 ---
 version: 1.0
+name: 'Server failure'
+description: 'Turn off a server'
+tags:
+  - prod
+  - state
+region: us-east-1
+steady_states:
+  - name: 'Check main site'
+    type: 'http'
+    endpoint: 'https://chaoscollector.ngrok.io/health'
+    status: 200
+steps:
+  - name: 'Stop the server'
+    action: 'stop_instances'
+    parameters:
+      instance_ids:
+        -  "i-0eb96356f41ef95c1"
+rollbacks:
+  - name: 'Start the server'
+    action: 'start_instances'
+    parameters:
+      instance_ids:
+        -  "i-0eb96356f41ef95c1"
+---
+version: 1.0
 name: 'Load test - Prod'
 description: 'Hit production with high tide load'
 tags:
@@ -14,13 +39,11 @@ steady_states:
 steps:
   - name: 'Send 10 vus for 5s'
     method: 'stress_endpoint'
-    parameters:
-      url: https://chaoscollector.ngrok.io/ping
-      vus: 10,
-      duration: 5
+    url: https://chaoscollector.ngrok.io/ping
+    vus: 10,
+    duration: 5
   - name: 'Send 100 vus for 5s'
     method: 'stress_endpoint'
-    parameters:
-      url: https://chaoscollector.ngrok.io/ping
-      vus: 100,
-      duration: 5
+    url: https://chaoscollector.ngrok.io/ping
+    vus: 100,
+    duration: 5
