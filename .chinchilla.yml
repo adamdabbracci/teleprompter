@@ -40,10 +40,17 @@ steady_states:
     endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
     status: 200
 steps:
-  - name: 'Stop the server'
+  - name: 'Stop tasks'
     action: 'stop_random_tasks'
     parameters:
       task_percent: 50
       cluster: "chinchilla-api-dev"
     delay:
-      after: 30
+      after: 5
+  - name: 'Stop more tasks'
+    action: 'stop_random_tasks'
+    parameters:
+      task_percent: 100
+      cluster: "chinchilla-api-dev"
+    delay:
+      after: 5
