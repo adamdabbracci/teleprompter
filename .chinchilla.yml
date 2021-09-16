@@ -45,3 +45,5 @@ steps:
     parameters:
       task_percent: 50
       cluster: "chinchilla-api-dev"
+    delay:
+      after: 30
