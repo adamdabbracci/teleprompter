@@ -24,3 +24,24 @@ rollbacks:
     parameters:
       instance_ids:
         -  "i-0eb96356f41ef95c1"
+
+---
+version: 1.0
+name: 'Kill API Tasks'
+description: 'Stop a random number of tasks in the cluster'
+tags:
+  - prod
+  - state
+platform: aws
+region: us-east-1
+steady_states:
+  - name: 'Check Products API'
+    type: 'http'
+    endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
+    status: 200
+steps:
+  - name: 'Stop the server'
+    action: 'stop_random_tasks'
+    parameters:
+      task_percent: 50
+      cluster: "chinchilla-api-dev"
