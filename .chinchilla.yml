@@ -34,6 +34,7 @@ tags:
   - state
 platform: aws
 region: us-east-1
+
 # Experiment halts if any of these checks fail
 steady_states:
   - name: 'Check Products API'
@@ -42,20 +43,20 @@ steady_states:
     status: 200
 # Changes to make
 steps:
-  - name: 'Stop tasks'
-    action: 'stop_random_tasks'
-    parameters:
-      task_percent: 50
-      cluster: "chinchilla-api-dev"
-    delay:
-      after: 5
-  - name: 'Stop more tasks'
-    action: 'stop_random_tasks'
-    parameters:
-      task_percent: 100
-      cluster: "chinchilla-api-dev"
-    delay:
-      after: 5
+  # - name: 'Stop tasks'
+  #   action: 'stop_random_tasks'
+  #   parameters:
+  #     task_percent: 50
+  #     cluster: "chinchilla-api-dev"
+  #   delay:
+  #     after: 5
+  # - name: 'Stop more tasks'
+  #   action: 'stop_random_tasks'
+  #   parameters:
+  #     task_percent: 100
+  #     cluster: "chinchilla-api-dev"
+  #   delay:
+  #     after: 5
   - name: 'Stress test the endpoint'
     action: 'stress_endpoint'
     parameters:
