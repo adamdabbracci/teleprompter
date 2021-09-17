@@ -34,11 +34,13 @@ tags:
   - state
 platform: aws
 region: us-east-1
+# Experiment halts if any of these checks fail
 steady_states:
   - name: 'Check Products API'
     type: 'http'
     endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
     status: 200
+# Changes to make
 steps:
   - name: 'Stop tasks'
     action: 'stop_random_tasks'
@@ -54,3 +56,12 @@ steps:
       cluster: "chinchilla-api-dev"
     delay:
       after: 5
+  - name: 'Stress test the endpoint'
+    action: 'stress_endpoint'
+    parameters:
+      endpoint: "http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products"
+      vus: 50
+      duration: "30s"
+# Expected outcomes
+# expect:
+#   - name: 'New ECS tasks start'
