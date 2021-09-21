@@ -43,26 +43,28 @@ steady_states:
     status: 200
 # Changes to make
 steps:
-  # - name: 'Stop tasks'
-  #   action: 'stop_random_tasks'
-  #   parameters:
-  #     task_percent: 50
-  #     cluster: "chinchilla-api-dev"
-  #   delay:
-  #     after: 5
-  # - name: 'Stop more tasks'
-  #   action: 'stop_random_tasks'
-  #   parameters:
-  #     task_percent: 100
-  #     cluster: "chinchilla-api-dev"
-  #   delay:
-  #     after: 5
-  - name: 'Stress test the endpoint'
-    action: 'stress_endpoint'
+  - name: 'Stop tasks'
+    action: 'stop_random_tasks'
     parameters:
-      endpoint: "http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products"
-      vus: 50
-      duration: "30s"
+      task_percent: 50
+      cluster: "chinchilla-api-dev"
+    delay:
+      after: 5
+  - name: 'Stop more tasks'
+    action: 'stop_random_tasks'
+    parameters:
+      task_percent: 100
+      cluster: "chinchilla-api-dev"
+    delay:
+      after: 5
+# Run at the end of the experiment, regardless of if it succeeds or not
+cleanup:
+  - name: 'Start an EC2 server'
+    action: 'start_instances'
+    parameters:
+      instance_ids:
+        -  "i-0eb96356f41ef95c1"
 # Expected outcomes
-# expect:
-#   - name: 'New ECS tasks start'
+expect:
+  - name: 'New ECS tasks start'
+    
