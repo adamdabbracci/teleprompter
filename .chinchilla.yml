@@ -33,6 +33,7 @@ tags:
   - prod
   - state
 platform: aws
+account_id: todo
 region: us-east-1
 
 # Experiment halts if any of these checks fail
@@ -41,8 +42,9 @@ steady_states:
     type: 'http'
     endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
     status: 200
+
 # Changes to make
-steps:
+conditions:
   - name: 'Stop tasks'
     action: 'stop_random_tasks'
     parameters:
@@ -57,6 +59,20 @@ steps:
       cluster: "chinchilla-api-dev"
     delay:
       after: 5
+
+# Expected outcomes
+expect:
+  - name: 'New ECS tasks start'
+    # Current options: aws 
+    source: 'aws'
+    # Current options: event, condition
+    type: 'event'
+    # Events: ecs_task_state
+    event:  ecs_task_state
+    value: "PENDING"
+    
+
+    
 # Run at the end of the experiment, regardless of if it succeeds or not
 cleanup:
   - name: 'Start an EC2 server'
@@ -64,7 +80,4 @@ cleanup:
     parameters:
       instance_ids:
         -  "i-0eb96356f41ef95c1"
-# Expected outcomes
-expect:
-  - name: 'New ECS tasks start'
     
