@@ -63,13 +63,14 @@ conditions:
 # Expected outcomes
 expect:
   - name: 'New ECS tasks start'
+    jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
     # Current options: aws 
-    source: 'aws'
-    # Current options: event, condition
-    type: 'event'
-    # Events: ecs_task_state
-    event:  ecs_task_state
-    value: "PENDING"
+    # source: 'aws'
+    # # Current options: event, condition
+    # type: 'event'
+    # parameters:
+    #   event:  ecs_task_state
+    #   value: "PENDING"
     
 
     
