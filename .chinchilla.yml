@@ -27,8 +27,8 @@
 
 ---
 version: 1.0
-name: 'Kill API Tasks'
-description: 'Stop a random number of tasks in the cluster'
+name: 'Chinchilla API'
+description: 'Test the chinchilla API'
 tags:
   - prod
   - state
@@ -43,42 +43,41 @@ steady_states:
     endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
     status: 200
 
-# Changes to make
-conditions:
-  - name: 'Stop tasks'
-    action: 'stop_random_tasks'
-    parameters:
-      task_percent: 50
-      cluster: "chinchilla-api-dev"
-    delay:
-      after: 5
-  - name: 'Stop more tasks'
-    action: 'stop_random_tasks'
-    parameters:
-      task_percent: 100
-      cluster: "chinchilla-api-dev"
-    delay:
-      after: 5
+# Different attacks to take on this service
+steps:
+  - conditions:
+      - name: 'Stop 50%'
+        action: 'stop_random_tasks'
+        parameters:
+          task_percent: 50
+          cluster: "chinchilla-api-dev"
+        delay:
+          after: 5
 
-# Expected outcomes
-expect:
-  - name: 'New ECS tasks start'
-    jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
-    # Current options: aws 
-    # source: 'aws'
-    # # Current options: event, condition
-    # type: 'event'
-    # parameters:
-    #   event:  ecs_task_state
-    #   value: "PENDING"
-    
+    # Expected outcomes
+    expect:
+      - name: 'New ECS tasks start'
+        jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
 
-    
-# Run at the end of the experiment, regardless of if it succeeds or not
-cleanup:
-  - name: 'Start an EC2 server'
-    action: 'start_instances'
-    parameters:
-      instance_ids:
-        -  "i-0eb96356f41ef95c1"
-    
+
+  - conditions:
+      - name: 'Stop 100%'
+        action: 'stop_random_tasks'
+        parameters:
+          task_percent: 100
+          cluster: "chinchilla-api-dev"
+        delay:
+          after: 5
+
+    # Expected outcomes
+    expect:
+      - name: 'New ECS tasks start'
+        jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
+   
+    # Run at the end of the step, regardless of if it succeeds or not
+    cleanup:
+      - name: 'Stop an EC2 server'
+        action: 'stop_instances'
+        parameters:
+          instance_ids:
+            -  "i-0eb96356f41ef95c1"
