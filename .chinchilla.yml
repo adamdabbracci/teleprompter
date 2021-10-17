@@ -22,7 +22,7 @@ steps:
     expect:
       - name: "Server comes back up"
         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
-   - conditions:
+  - conditions:
     - name: 'Stop another server'
       action: 'stop_instances'
       parameters:
