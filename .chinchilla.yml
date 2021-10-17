@@ -28,9 +28,9 @@ steps:
       parameters:
         instance_ids:
           -  "i-0a5336fca819733c8"
-      expect:
-        - name: "Server comes back up"
-          jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+    expect:
+      - name: "Server comes back up"
+        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 
 # ---
 # version: 1.0
