@@ -18,7 +18,7 @@ steps:
       action: 'stop_instances'
       parameters:
         instance_ids:
-          -  "i-0cdad69c7815aeb19"
+          -  "i-03a035eab470fba3a"
     expect:
       - name: "Server comes back up"
         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
