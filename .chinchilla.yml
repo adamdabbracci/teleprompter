@@ -18,10 +18,19 @@ steps:
       action: 'stop_instances'
       parameters:
         instance_ids:
-          -  "i-03a035eab470fba3a"
+          -  "	i-0a5336fca819733c8"
     expect:
       - name: "Server comes back up"
         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+   - conditions:
+    - name: 'Stop another server'
+      action: 'stop_instances'
+      parameters:
+        instance_ids:
+          -  "i-0a5336fca819733c8"
+      expect:
+        - name: "Server comes back up"
+          jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 
 # ---
 # version: 1.0
