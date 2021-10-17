@@ -1,83 +1,81 @@
-# ---
-# version: 1.0
-# name: 'Server failure'
-# description: 'Turn off a server'
-# tags:
-#   - prod
-#   - state
-# platform: aws
-# region: us-east-1
-# steady_states:
-#   - name: 'Check main site'
-#     type: 'http'
-#     endpoint: 'https://chaoscollector.ngrok.io/health'
-#     status: 200
-# steps:
-#   - name: 'Stop the server'
-#     action: 'stop_instances'
-#     parameters:
-#       instance_ids:
-#         -  "i-0eb96356f41ef95c1"
-# rollbacks:
-#   - name: 'Start the server'
-#     action: 'start_instances'
-#     parameters:
-#       instance_ids:
-#         -  "i-0eb96356f41ef95c1"
-
 ---
 version: 1.0
-name: 'Chinchilla API'
-description: 'Test the chinchilla API'
+name: 'Server failure within an ASG'
+description: 'Turn off a single server and expect a new one to spin up'
 tags:
   - prod
   - state
 platform: aws
-account_id: todo
 region: us-east-1
-
-# Experiment halts if any of these checks fail
 steady_states:
-  - name: 'Check Products API'
+  - name: 'Verify healthcheck is up'
     type: 'http'
-    endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
+    endpoint: 'https://chaoscollector.ngrok.io/health'
     status: 200
-
-# Different attacks to take on this service
 steps:
   - conditions:
-      - name: 'Stop 50%'
-        action: 'stop_random_tasks'
-        parameters:
-          task_percent: 50
-          cluster: "chinchilla-api-dev"
-        delay:
-          after: 5
-
-    # Expected outcomes
+    - name: 'Stop one server'
+      action: 'stop_instances'
+      parameters:
+        instance_ids:
+          -  "i-09295c00d884f924b"
     expect:
-      - name: 'New ECS tasks start'
+      - name: "Server comes back up"
         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
 
+# ---
+# version: 1.0
+# name: 'Chinchilla API'
+# description: 'Test the chinchilla API'
+# tags:
+#   - prod
+#   - state
+# platform: aws
+# account_id: todo
+# region: us-east-1
 
-  - conditions:
-      - name: 'Stop 100%'
-        action: 'stop_random_tasks'
-        parameters:
-          task_percent: 100
-          cluster: "chinchilla-api-dev"
-        delay:
-          after: 5
+# # Experiment halts if any of these checks fail
+# steady_states:
+#   - name: 'Check Products API'
+#     type: 'http'
+#     endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
+#     status: 200
 
-    # Expected outcomes
-    expect:
-      - name: 'New ECS tasks start'
-        jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
+# # Different attacks to take on this service
+# steps:
+#   - conditions:
+#       - name: 'Stop 50%'
+#         action: 'stop_random_tasks'
+#         parameters:
+#           task_percent: 50
+#           cluster: "chinchilla-api-dev"
+#         delay:
+#           after: 5
+
+#     # Expected outcomes
+#     expect:
+#       - name: 'New ECS tasks start'
+#         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
+
+
+#   - conditions:
+#       - name: 'Stop 100%'
+#         action: 'stop_random_tasks'
+#         parameters:
+#           task_percent: 100
+#           cluster: "chinchilla-api-dev"
+#         delay:
+#           after: 5
+
+#     # Expected outcomes
+#     expect:
+#       - name: 'New ECS tasks start'
+#         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
    
-    # Run at the end of the step, regardless of if it succeeds or not
-    cleanup:
-      - name: 'Stop an EC2 server'
-        action: 'stop_instances'
-        parameters:
-          instance_ids:
-            -  "i-0eb96356f41ef95c1"
+#     # Run at the end of the step, regardless of if it succeeds or not
+#     cleanup:
+#       - name: 'Stop an EC2 server'
+#         action: 'stop_instances'
+#         parameters:
+#           instance_ids:
+#             -  "i-0eb96356f41ef95c1"
