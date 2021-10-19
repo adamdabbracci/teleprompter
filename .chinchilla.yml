@@ -20,7 +20,12 @@ steps:
         endpoint: https://chaoscollector.ngrok.io/health
         vus: 10
         duration: 1s
-
+    # expect:
+    #   - name: "Healthcheck is still up"
+    #     type: http
+    #     parameters:
+    #       endpoint: https://chaoscollector.ngrok.io/health
+    #       debug: true
 # ---
 # version: 1.0
 # name: 'Server failure within an ASG'
@@ -44,6 +49,7 @@ steps:
 #           - "i-0d86be22c62feee2c"
 #     expect:
 #       - name: "Server comes back up"
+#         type: event
 #         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 #   - conditions:
 #     - name: 'Stop another server'
@@ -53,6 +59,7 @@ steps:
 #           -  "i-05b32e2dfcc1c0819"
 #     expect:
 #       - name: "Server comes back up"
+#         type: event
 #         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 
 # ---
@@ -87,6 +94,7 @@ steps:
 #     # Expected outcomes
 #     expect:
 #       - name: 'New ECS tasks start'
+#         type: event
 #         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
 
 
@@ -102,6 +110,7 @@ steps:
 #     # Expected outcomes
 #     expect:
 #       - name: 'New ECS tasks start'
+#         type: event
 #         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
    
 #     # Run at the end of the step, regardless of if it succeeds or not
