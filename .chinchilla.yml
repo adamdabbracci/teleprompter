@@ -144,7 +144,7 @@ steps:
 
     cleanup:
       - name: 'Start the server'
-        action: 'start_instnaces'
+        action: 'start_instances'
         parameters:
           instance_ids:
             -  "i-0b406e5f54ebdcae7"
