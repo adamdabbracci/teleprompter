@@ -26,41 +26,41 @@
     #     parameters:
     #       endpoint: https://chaoscollector.ngrok.io/health
     #       debug: true
----
-version: 1.0
-name: 'Server failure within an ASG'
-description: 'Turn off a single server and expect a new one to spin up'
-tags:
-  - prod
-  - state
-platform: aws
-region: us-east-1
-steady_states:
-  - name: 'Verify healthcheck is up'
-    type: 'http'
-    endpoint: 'https://chaoscollector.ngrok.io/health'
-    status: 200
-steps:
-  - conditions:
-    - name: 'Stop one server'
-      action: 'stop_instances'
-      parameters:
-        instance_ids:
-          - "i-0d86be22c62feee2c"
-    expect:
-      - name: "Server comes back up"
-        type: event
-        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
-  - conditions:
-    - name: 'Stop another server'
-      action: 'stop_instances'
-      parameters:
-        instance_ids:
-          -  "i-05b32e2dfcc1c0819"
-    expect:
-      - name: "Server comes back up"
-        type: event
-        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+# ---
+# version: 1.0
+# name: 'Server failure within an ASG'
+# description: 'Turn off a single server and expect a new one to spin up'
+# tags:
+#   - prod
+#   - state
+# platform: aws
+# region: us-east-1
+# steady_states:
+#   - name: 'Verify healthcheck is up'
+#     type: 'http'
+#     endpoint: 'https://chaoscollector.ngrok.io/health'
+#     status: 200
+# steps:
+#   - conditions:
+#     - name: 'Stop one server'
+#       action: 'stop_instances'
+#       parameters:
+#         instance_ids:
+#           - "i-04eca74d308f10ba0"
+#     expect:
+#       - name: "Server comes back up"
+#         type: event
+#         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+#   - conditions:
+#     - name: 'Stop another server'
+#       action: 'stop_instances'
+#       parameters:
+#         instance_ids:
+#           -  "i-04eca74d308f10ba0"
+#     expect:
+#       - name: "Server comes back up"
+#         type: event
+#         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 
 # ---
 # version: 1.0
@@ -120,3 +120,24 @@ steps:
 #         parameters:
 #           instance_ids:
 #             -  "i-0eb96356f41ef95c1"
+
+---
+version: 1.0
+name: 'Kill EC2 instance'
+description: 'Kills it and nothing happens'
+tags:
+  - prod
+  - state
+platform: aws
+region: us-east-1
+steps:
+  - conditions:
+    - name: 'Stop server'
+      action: 'stop_instances'
+      parameters:
+        instance_ids:
+          - "i-04eca74d308f10ba0"
+    expect:
+      - name: "Server dies"
+        type: event
+        jq: .["detail-type"] == "EC2 Instance State-change Notification" and .["detail"]["instance-id"] == "i-09295c00d884f924b" and .["detail"]["state"] == "terminated"
