@@ -1,35 +1,7 @@
----
-version: 1.0
-name: 'Stress test endpoint 123'
-description: 'Stress it real good'
-tags:
-  - prod
-  - state
-platform: aws
-region: us-east-1
-steady_states:
-  - name: 'Verify healthcheck is up'
-    type: 'http'
-    endpoint: 'https://chaoscollector.ngrok.io/health'
-    status: 200
-steps:
-  - conditions:
-    - name: 'Stress the healthcheck'
-      action: 'stress_endpoint'
-      parameters:
-        endpoint: https://chaoscollector.ngrok.io/health
-        vus: 10
-        duration: 1s
-    # expect:
-    #   - name: "Healthcheck is still up"
-    #     type: http
-    #     parameters:
-    #       endpoint: https://chaoscollector.ngrok.io/health
-    #       debug: true
 # ---
 # version: 1.0
-# name: 'Server failure within an ASG'
-# description: 'Turn off a single server and expect a new one to spin up'
+# name: 'Stress test endpoint 123'
+# description: 'Stress it real good'
 # tags:
 #   - prod
 #   - state
@@ -42,25 +14,53 @@ steps:
 #     status: 200
 # steps:
 #   - conditions:
-#     - name: 'Stop one server'
-#       action: 'stop_instances'
+#     - name: 'Stress the healthcheck'
+#       action: 'stress_endpoint'
 #       parameters:
-#         instance_ids:
-#           - "i-0d86be22c62feee2c"
-#     expect:
-#       - name: "Server comes back up"
-#         type: event
-#         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
-#   - conditions:
-#     - name: 'Stop another server'
-#       action: 'stop_instances'
-#       parameters:
-#         instance_ids:
-#           -  "i-05b32e2dfcc1c0819"
-#     expect:
-#       - name: "Server comes back up"
-#         type: event
-#         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+#         endpoint: https://chaoscollector.ngrok.io/health
+#         vus: 10
+        duration: 1s
+    expect:
+      - name: "Healthcheck is still up"
+        type: http
+        parameters:
+          endpoint: https://chaoscollector.ngrok.io/health
+          debug: true
+---
+version: 1.0
+name: 'Server failure within an ASG'
+description: 'Turn off a single server and expect a new one to spin up'
+tags:
+  - prod
+  - state
+platform: aws
+region: us-east-1
+steady_states:
+  - name: 'Verify healthcheck is up'
+    type: 'http'
+    endpoint: 'https://chaoscollector.ngrok.io/health'
+    status: 200
+steps:
+  - conditions:
+    - name: 'Stop one server'
+      action: 'stop_instances'
+      parameters:
+        instance_ids:
+          - "i-0d86be22c62feee2c"
+    expect:
+      - name: "Server comes back up"
+        type: event
+        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+  - conditions:
+    - name: 'Stop another server'
+      action: 'stop_instances'
+      parameters:
+        instance_ids:
+          -  "i-05b32e2dfcc1c0819"
+    expect:
+      - name: "Server comes back up"
+        type: event
+        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 
 # ---
 # version: 1.0
