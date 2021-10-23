@@ -140,4 +140,11 @@ steps:
     expect:
       - name: "Server dies"
         type: event
-        jq: .["detail-type"] == "EC2 Instance State-change Notification" and .["detail"]["instance-id"] == "i-09295c00d884f924b" and .["detail"]["state"] == "terminated"
+        jq: .["detail-type"] == "EC2 Instance State-change Notification" and .["detail"]["instance-id"] == "i-09295c00d884f924b" and .["detail"]["state"] == "stopped"
+
+    cleanup:
+      - name: 'Start the server'
+        action: 'start_instnaces'
+        parameters:
+          instance_ids:
+            -  "i-04eca74d308f10ba0"
