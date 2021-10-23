@@ -19,13 +19,13 @@
 #       parameters:
 #         endpoint: https://chaoscollector.ngrok.io/health
 #         vus: 10
-        duration: 1s
-    expect:
-      - name: "Healthcheck is still up"
-        type: http
-        parameters:
-          endpoint: https://chaoscollector.ngrok.io/health
-          debug: true
+#         duration: 1s
+    # expect:
+    #   - name: "Healthcheck is still up"
+    #     type: http
+    #     parameters:
+    #       endpoint: https://chaoscollector.ngrok.io/health
+    #       debug: true
 ---
 version: 1.0
 name: 'Server failure within an ASG'
