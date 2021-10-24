@@ -26,43 +26,45 @@
     #     parameters:
     #       endpoint: https://chaoscollector.ngrok.io/health
     #       debug: true
-# ---
-# version: 1.0
-# name: 'Server failure within an ASG'
-# description: 'Turn off a single server and expect a new one to spin up'
-# tags:
-#   - prod
-#   - state
-# platform: aws
-# region: us-east-1
-# steady_states:
-#   - name: 'Verify healthcheck is up'
-#     type: 'http'
-#     endpoint: 'https://chaoscollector.ngrok.io/health'
-#     status: 200
-# steps:
-#   - conditions:
-#     - name: 'Stop one server'
-#       action: 'stop_instances'
-#       parameters:
-#         instance_ids:
-#           - "i-04eca74d308f10ba0"
-#     expect:
-#       - name: "Server comes back up"
-#         type: event
-#         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
-#   - conditions:
-#     - name: 'Stop another server'
-#       action: 'stop_instances'
-#       parameters:
-#         instance_ids:
-#           -  "i-04eca74d308f10ba0"
-#     expect:
-#       - name: "Server comes back up"
-#         type: event
-#         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+---
+version: 1.0
+name: 'Server failure within an ASG'
+description: 'Turn off a single server and expect a new one to spin up'
+tags:
+  - prod
+  - state
+platform: aws
+region: us-east-1
+steady_states:
+  - name: 'Verify healthcheck is up'
+    type: 'http'
+    endpoint: 'https://chaoscollector.ngrok.io/health'
+    status: 200
+steps:
+  - conditions:
+    - name: 'Stop one server'
+      action: 'stop_random_instances'
+      parameters:
+        asg_names:
+          - "chinchilla-test-target-asg"
+        instance_percent: 50
+    expect:
+      - name: "Server comes back up"
+        type: event
+        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+  - conditions:
+    - name: 'Stop another server'
+      action: 'stop_random_instances'
+      parameters:
+          asg_names:
+            - "chinchilla-test-target-asg"
+          instance_percent: 100
+    expect:
+      - name: "Server comes back up"
+        type: event
+        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 
-# ---
+---
 # version: 1.0
 # name: 'Chinchilla API'
 # description: 'Test the chinchilla API'
@@ -121,30 +123,32 @@
 #           instance_ids:
 #             -  "i-0eb96356f41ef95c1"
 
----
-version: 1.0
-name: 'Kill EC2 instance'
-description: 'Kills it and nothing happens'
-tags:
-  - prod
-  - state
-platform: aws
-region: us-east-1
-steps:
-  - conditions:
-    - name: 'Stop server'
-      action: 'stop_instances'
-      parameters:
-        instance_ids:
-          - "i-0b406e5f54ebdcae7"
-    expect:
-      - name: "Server dies"
-        type: event
-        jq: .["detail-type"] == "EC2 Instance State-change Notification" and .["detail"]["instance-id"] == "i-0b406e5f54ebdcae7" and .["detail"]["state"] == "stopped"
+# ---
+# version: 1.0
+# name: 'Kill EC2 instance'
+# description: 'Kills it and nothing happens'
+# tags:
+#   - prod
+#   - state
+# platform: aws
+# region: us-east-1
+# steps:
+#   - conditions:
+#     - name: 'Stop server'
+#       action: 'stop_instances'
+#       delay:
+#         after: 10
+#       parameters:
+#         instance_ids:
+#           - "i-0b406e5f54ebdcae7"
+#     expect:
+#       - name: "Server dies"
+#         type: event
+#         jq: .["detail-type"] == "EC2 Instance State-change Notification" and .["detail"]["instance-id"] == "i-0b406e5f54ebdcae7" and .["detail"]["state"] == "stopped"
 
-    cleanup:
-      - name: 'Start the server'
-        action: 'start_instances'
-        parameters:
-          instance_ids:
-            -  "i-0b406e5f54ebdcae7"
+#     cleanup:
+#       - name: 'Start the server'
+#         action: 'start_instances'
+#         parameters:
+#           instance_ids:
+#             -  "i-0b406e5f54ebdcae7"
