@@ -1,6 +1,6 @@
 ---
 version: 1.0
-name: 'Stress test endpoint'
+name: 'Stress test endpoint 1'
 description: 'Stress it real good'
 tags:
   - prod
