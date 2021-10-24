@@ -38,7 +38,7 @@ region: us-east-1
 steady_states:
   - name: 'Verify healthcheck is up'
     type: 'http'
-    endpoint: 'https://chaoscollector.ngrok.io/health'
+    endpoint: 'https://afkmgnkqgn.us-east-1.awsapprunner.com/health'
     status: 200
 steps:
   - conditions:
