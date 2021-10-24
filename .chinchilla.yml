@@ -20,12 +20,6 @@ steps:
         endpoint: https://chaoscollector.ngrok.io/ping
         vus: 10
         duration: 20s
-    # expect:
-    #   - name: "Healthcheck is still up"
-    #     type: http
-    #     parameters:
-    #       endpoint: https://chaoscollector.ngrok.io/health
-    #       debug: true
 # ---
 # version: 1.0
 # name: 'Server failure within an ASG'
@@ -50,7 +44,7 @@ steps:
 #         instance_count: 1
 #     expect:
 #       - name: "Server comes back up"
-#         type: event
+#         type: webhook
 #         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 # ---
 # version: 1.0
@@ -84,7 +78,7 @@ steps:
 #     # Expected outcomes
 #     expect:
 #       - name: 'New ECS tasks start'
-#         type: event
+#         type: webhook
 #         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
 
 
@@ -100,7 +94,7 @@ steps:
 #     # Expected outcomes
 #     expect:
 #       - name: 'New ECS tasks start'
-#         type: event
+#         type: webhook
 #         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
    
 #     # Run at the end of the step, regardless of if it succeeds or not
@@ -131,7 +125,7 @@ steps:
 #           - "i-0b406e5f54ebdcae7"
 #     expect:
 #       - name: "Server dies"
-#         type: event
+#         type: webhook
 #         jq: .["detail-type"] == "EC2 Instance State-change Notification" and .["detail"]["instance-id"] == "i-0b406e5f54ebdcae7" and .["detail"]["state"] == "stopped"
 
 #     cleanup:
