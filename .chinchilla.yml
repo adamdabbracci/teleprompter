@@ -52,18 +52,6 @@ steps:
       - name: "Server comes back up"
         type: event
         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
-  - conditions:
-    - name: 'Stop another server'
-      action: 'stop_random_instances'
-      parameters:
-          asg_names:
-            - "chinchilla-test-target-asg"
-          instance_count: 1
-    expect:
-      - name: "Server comes back up"
-        type: event
-        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
-
 # ---
 # version: 1.0
 # name: 'Chinchilla API'
