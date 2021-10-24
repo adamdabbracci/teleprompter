@@ -64,7 +64,7 @@ steps:
         type: event
         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
 
----
+# ---
 # version: 1.0
 # name: 'Chinchilla API'
 # description: 'Test the chinchilla API'
