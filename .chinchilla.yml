@@ -47,7 +47,7 @@ steps:
       parameters:
         asg_names:
           - "chinchilla-test-target-asg"
-        instance_percent: 50
+        instance_count: 1
     expect:
       - name: "Server comes back up"
         type: event
@@ -58,7 +58,7 @@ steps:
       parameters:
           asg_names:
             - "chinchilla-test-target-asg"
-          instance_percent: 100
+          instance_count: 1
     expect:
       - name: "Server comes back up"
         type: event
