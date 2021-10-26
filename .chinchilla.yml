@@ -46,6 +46,7 @@ steps:
       - name: "Server comes back up"
         type: webhook
         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+        
 # ---
 # version: 1.0
 # name: 'Chinchilla API'
