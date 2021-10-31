@@ -27,7 +27,7 @@ description: 'Turn off a single server and expect a new one to spin up'
 tags:
   - prod
   - state
-platform: aws
+cloud_account_i: 7755d640-3a71-11ec-800e-784f4371f2e3
 region: us-east-1
 steady_states:
   - name: 'Verify healthcheck is up'
@@ -40,12 +40,12 @@ steps:
       action: 'stop_random_instances'
       parameters:
         asg_names:
-          - "chinchilla-test-target-asg"
+          - "example-asg"
         instance_count: 1
     expect:
       - name: "Server comes back up"
         type: webhook
-        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "chinchilla-test-target-asg"
+        jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "example-asg"
         
 # ---
 # version: 1.0
