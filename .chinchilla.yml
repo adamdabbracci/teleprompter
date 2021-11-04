@@ -27,7 +27,7 @@ description: 'Turn off a single server and expect a new one to spin up'
 tags:
   - prod
   - state
-cloud_account_i: 7755d640-3a71-11ec-800e-784f4371f2e3
+cloud_account_id: 7755d640-3a71-11ec-800e-784f4371f2e3
 region: us-east-1
 steady_states:
   - name: 'Verify healthcheck is up'
