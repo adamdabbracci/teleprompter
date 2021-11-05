@@ -22,8 +22,8 @@
 #         duration: 20s
 ---
 version: 1.0
-name: 'Server failure within an ASG'
-description: 'Turn off a single server and expect a new one to spin up'
+name: 'Production App Tier'
+description: 'Test our production app tier'
 tags:
   - prod
   - state
@@ -36,13 +36,13 @@ steady_states:
     status: 200
 steps:
   - conditions:
-    - name: 'Stop one server'
+    - name: 'Stop one server in ASG'
       action: 'stop_random_instances'
       parameters:
         asg_names:
           - "example-asg"
         instance_count: 1
-    - name: 'Stop another server'
+    - name: 'Stop another server in ASG'
       action: 'stop_random_instances'
       delay:
         before: 10
