@@ -1,6 +1,6 @@
 ---
 version: 1.0
-name: 'Testing everything as a step'
+name: 'Production API Test'
 description: 'Test our production app tier'
 tags:
   - prod
