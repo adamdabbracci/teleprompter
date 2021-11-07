@@ -15,7 +15,7 @@ steady_states:
 steps:
   - name: 'Stop one server in ASG'
     type: action
-    action: 'asg.stop_random_instances'
+    action: 'stop_random_instances'
     parameters:
       asg_names:
         - "example-asg"
@@ -27,7 +27,7 @@ steps:
   #     jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "example-asg"
   # - name: 'Stop a second server for funsies'
   #   type: action
-  #   action: 'asg.stop_random_instances'
+  #   action: 'stop_random_instances'
   #   parameters:
   #     asg_names:
   #       - "example-asg"
