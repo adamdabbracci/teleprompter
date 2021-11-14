@@ -20,23 +20,23 @@ steps:
       asg_names:
         - "example-asg"
       instance_count: 1
-  # - name: "A server should come back up"
+  # - name: "ASG should be empty"
   #   type: probe
-  #   probe: 
+  #   probe: instance_count_by_health
   #   parameters:
-  #     jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "example-asg"
-  # - name: 'Stop a second server for funsies'
-  #   type: action
-  #   action: 'stop_random_instances'
-  #   parameters:
+  #     count_healthy: true
   #     asg_names:
-  #       - "example-asg"
-  #     instance_count: 1
+  #         - "example-asg"
   - name: "A server should come back up"
     type: expected_event
     event_type: webhook
     parameters:
       jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "example-asg"
+  - name: "A test webhook should be received"
+    type: expected_event
+    event_type: webhook
+    parameters:
+      jq: .["test"] == "event"
 # ---
 # version: 1.0
 # name: 'Production App Tier'
