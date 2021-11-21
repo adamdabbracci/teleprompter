@@ -5,7 +5,7 @@ description: 'Test our production app tier'
 tags:
   - prod
   - state
-cloud_account_id: ebfe2b0e-3fdb-11ec-ba07-784f4371f2e3
+cloud_account_id: 50f436a6-4ad2-11ec-b52b-fe90b849e584
 region: us-east-1
 steady_states:
   - name: 'Healthcheck must stay up'
