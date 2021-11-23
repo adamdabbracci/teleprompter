@@ -1,0 +1,162 @@
+---
+version: 1.0
+name: 'Production API Test'
+description: 'Test our production app tier'
+tags:
+  - prod
+  - state
+cloud_account_id: 4bcdc110-4ae1-11ec-98fd-02b413db443f
+region: us-east-1
+steady_states:
+  - name: 'Healthcheck must stay up'
+    type: 'http'
+    endpoint: 'https://afkmgnkqgn.us-east-1.awsapprunner.com/health'
+    status: 200
+steps:
+  - name: 'Stop one server in ASG'
+    type: action
+    action: 'stop_random_instances'
+    parameters:
+      asg_names:
+        - "example-asg"
+      instance_count: 1
+  # - name: "ASG should be empty"
+  #   type: probe
+  #   probe: instance_count_by_health
+  #   parameters:
+  #     count_healthy: true
+  #     asg_names:
+  #         - "example-asg"
+  - name: "A server should come back up"
+    type: expected_event
+    event_type: webhook
+    parameters:
+      jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "example-asg"
+  - name: "A test webhook should be received"
+    type: expected_event
+    event_type: webhook
+    parameters:
+      jq: .["test"] == "event"
+# ---
+# version: 1.0
+# name: 'Production App Tier'
+# description: 'Test our production app tier'
+# tags:
+#   - prod
+#   - state
+# cloud_account_id: 7755d640-3a71-11ec-800e-784f4371f2e3
+# region: us-east-1
+# steady_states:
+#   - name: 'Verify healthcheck is up'
+#     type: 'http'
+#     endpoint: 'https://afkmgnkqgn.us-east-1.awsapprunner.com/health'
+#     status: 200
+# steps:
+#   - conditions:
+#     - name: 'Stop one server in ASG'
+#       action: 'stop_random_instances'
+#       parameters:
+#         asg_names:
+#           - "example-asg"
+#         instance_count: 1
+#     - name: 'Stop another server in ASG'
+#       action: 'stop_random_instances'
+#       delay:
+#         before: 10
+#       parameters:
+#         asg_names:
+#           - "example-asg"
+#         instance_count: 1
+#     expect:
+#       - name: "Server comes back up"
+#         type: webhook
+#         jq: .["detail-type"] == "EC2 Instance Launch Successful" and .["detail"]["AutoScalingGroupName"] == "example-asg"
+        
+# ---
+# version: 1.0
+# name: 'Chinchilla API'
+# description: 'Test the chinchilla API'
+# tags:
+#   - prod
+#   - state
+# platform: aws
+# account_id: todo
+# region: us-east-1
+
+# # Experiment halts if any of these checks fail
+# steady_states:
+#   - name: 'Check Products API'
+#     type: 'http'
+#     endpoint: 'http://chinchilla-api-dev-878609447.us-east-1.elb.amazonaws.com/products'
+#     status: 200
+
+# # Different attacks to take on this service
+# steps:
+#   - conditions:
+#       - name: 'Stop 50%'
+#         action: 'stop_random_tasks'
+#         parameters:
+#           task_percent: 50
+#           cluster: "chinchilla-api-dev"
+#         delay:
+#           after: 5
+
+#     # Expected outcomes
+#     expect:
+#       - name: 'New ECS tasks start'
+#         type: webhook
+#         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
+
+
+#   - conditions:
+#       - name: 'Stop 100%'
+#         action: 'stop_random_tasks'
+#         parameters:
+#           task_percent: 100
+#           cluster: "chinchilla-api-dev"
+#         delay:
+#           after: 5
+
+#     # Expected outcomes
+#     expect:
+#       - name: 'New ECS tasks start'
+#         type: webhook
+#         jq: .["detail-type"] == "ECS Task State Change" and ."detail"."lastStatus" == "RUNNING" and ."detail"."clusterArn" == "arn:aws:ecs:us-east-1:332697329009:cluster/chinchilla-api-dev"
+   
+#     # Run at the end of the step, regardless of if it succeeds or not
+#     cleanup:
+#       - name: 'Stop an EC2 server'
+#         action: 'stop_instances'
+#         parameters:
+#           instance_ids:
+#             -  "i-0eb96356f41ef95c1"
+
+# ---
+# version: 1.0
+# name: 'Kill EC2 instance'
+# description: 'Kills it and nothing happens'
+# tags:
+#   - prod
+#   - state
+# platform: aws
+# region: us-east-1
+# steps:
+#   - conditions:
+#     - name: 'Stop server'
+#       action: 'stop_instances'
+#       delay:
+#         after: 10
+#       parameters:
+#         instance_ids:
+#           - "i-0b406e5f54ebdcae7"
+#     expect:
+#       - name: "Server dies"
+#         type: webhook
+#         jq: .["detail-type"] == "EC2 Instance State-change Notification" and .["detail"]["instance-id"] == "i-0b406e5f54ebdcae7" and .["detail"]["state"] == "stopped"
+
+#     cleanup:
+#       - name: 'Start the server'
+#         action: 'start_instances'
+#         parameters:
+#           instance_ids:
+#             -  "i-0b406e5f54ebdcae7"
